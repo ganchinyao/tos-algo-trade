@@ -1,10 +1,14 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
+import { isAuthorized } from "./auth";
 
 dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT;
+
+app.use(express.json());
+app.use(isAuthorized);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
