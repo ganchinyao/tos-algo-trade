@@ -9,6 +9,13 @@ export const getRefreshToken = () => {
 /**
  * Get the Client Id (the Consumer Key) append with @AMER.OAUTHAP
  */
-export const getClientID = () => {
+export const getClientId = () => {
   return (process.env.CONSUMER_KEY + "@AMER.OAUTHAP") as string;
+};
+
+/**
+ * Get the TD Ameritrade Trading Account Id
+ */
+export const getAccountId = () => {
+  return process.env.ACCOUNT_ID as string;
 };

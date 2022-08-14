@@ -6,16 +6,17 @@ import axios, {
   AxiosResponse,
   Method,
 } from "axios";
-import { getClientID, getRefreshToken } from "../utils";
+import { getClientId, getRefreshToken } from "../../utils";
 import qs from "qs";
+import { IAuthConfig, IWriteResponse, TacRequestConfig } from "./types";
 
 /**
- * Stores the current Auth data and will append access_token with its expired time.
+ * Stores the current Auth data into memory.
  * We will read this from memory to check if access_token has expired to avoid unnecessary call to get new access_token.
  */
 const localAuthData: IAuthConfig = {
-  refresh_token: getRefreshToken(),
-  client_id: getClientID(),
+  refresh_token: "", // Don't call getRefreshToken() here as it will be undefined. Similarly for clientId.
+  client_id: "",
 };
 
 const instance: AxiosInstance = axios.create({
@@ -30,27 +31,6 @@ const instance: AxiosInstance = axios.create({
     "Sec-Fetch-Site": "same-site",
   },
 });
-
-export interface IAuthConfig {
-  refresh_token: string;
-  client_id: string;
-  access_token?: string;
-  expires_on?: number; // Will be Date.now() + 30mins.
-  expires_in?: number; // Value returned from TD. Will be 1800 for 30 minutes
-  code?: string;
-  redirect_uri?: string;
-}
-
-export interface TacRequestConfig {
-  url?: string;
-  bodyJSON?: any;
-}
-
-export interface IWriteResponse {
-  data: any;
-  statusCode: number;
-  location: string;
-}
 
 /**
  * Use this for sending an HTTP GET request to api.tdameritrade.com
@@ -194,6 +174,8 @@ async function doAuthRequest(data: any): Promise<IAuthConfig> {
  * Returns auth info object with the all-important access_token.
  */
 async function refreshAPIAuthentication(): Promise<IAuthConfig> {
+  localAuthData.refresh_token = getRefreshToken();
+  localAuthData.client_id = getClientId();
   return await doAuthRequest(
     qs.stringify({
       grant_type: "refresh_token",
