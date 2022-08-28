@@ -1,12 +1,12 @@
 import { INSTRUCTION } from "@root/utils/order";
-import { Strategy } from "@root/classes/Order";
+import { IOrder_Strategy } from "@root/classes/Order";
 
 export interface ILogBook_Trade {
   timestamp: string; // date-time stamp in Unix
   instruction: INSTRUCTION;
   quantity: number; // 100
   symbol: string; // 'SPY'
-  strategy: Strategy;
+  strategy: IOrder_Strategy;
 }
 
 export type ILogBook_Order = {
