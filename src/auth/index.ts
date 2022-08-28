@@ -6,6 +6,10 @@ export const isAuthorized = (
   res: Response,
   next: NextFunction
 ) => {
+  if (req.method === "GET") {
+    // Don't need check for authorization for GET method
+    return next();
+  }
   const body: IAuth = req.body;
   const reqAuth = body.auth;
   const actualAuth = process.env.AUTH;
@@ -13,6 +17,6 @@ export const isAuthorized = (
     return next();
   }
 
-  console.log("Unauthorized!", { req });
+  console.log("Unauthorized!");
   res.status(401).send();
 };
