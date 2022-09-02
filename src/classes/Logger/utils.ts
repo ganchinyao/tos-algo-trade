@@ -71,7 +71,7 @@ export const addCompletedTradeToSummaryLogbook = (
 
   const openedPrice = trades[trades.length - 2].price;
   const closedPrice = trades[trades.length - 1].price;
-  const p_l = closedPrice - openedPrice;
+  const p_l = Number((closedPrice - openedPrice).toFixed(2));
 
   if (summary) {
     // Already exist, so append to existing one.
