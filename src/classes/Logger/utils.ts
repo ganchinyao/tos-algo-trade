@@ -2,7 +2,7 @@ import { Logger } from ".";
 import { getYYYYMMDD } from "../../utils/datetime";
 import { INSTRUCTION } from "../../utils/order";
 import { IOrder_Strategy } from "../Order";
-import { ILogBook_Order, ILogBook_Trade } from "./types";
+import { ILogBook_Error, ILogBook_Order, ILogBook_Trade } from "./types";
 
 /**
  * Add an order entry into the Logbook
@@ -85,6 +85,28 @@ export const addCompletedTradeToSummaryLogbook = (
       numCompletedTrades: 1,
       rawP_L: [p_l],
       netP_L: p_l,
+    });
+  }
+};
+
+/**
+ * Add an error to the logbook
+ * @param timestamp Unix timestamp in 13 digits at the time the error happened.
+ * @param error The error message
+ */
+export const addErrorToLogbook = (timestamp: number, error: any) => {
+  const currentErrors = Logger.getErrors();
+  const date = getYYYYMMDD(timestamp);
+  const errors = currentErrors.find((err) => err.date === date);
+
+  if (errors) {
+    // Already exist, so append to existing one.
+    errors.err.push(error);
+  } else {
+    // Doesn't exist yet, create new one for this date.
+    currentErrors.push({
+      date,
+      err: [error],
     });
   }
 };

@@ -17,7 +17,7 @@ export type ILogBook_Order = {
 
 export type ILogBook_Error = {
   date: string;
-  err: any;
+  err: any[];
 };
 
 export type ILogBook_Summary = {
