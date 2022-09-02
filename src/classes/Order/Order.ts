@@ -1,4 +1,4 @@
-import { INSTRUCTION, makeMarketOrder_SPY } from "../../utils/order";
+import { ASSET_TYPE, INSTRUCTION, makeMarketOrder } from "../../utils/order";
 import { getCurrentPrice } from "../../utils/quotes";
 import {
   addCompletedTradeToSummaryLogbook,
@@ -36,15 +36,19 @@ class Order {
   }
 
   /**
-   * Use this to open a Buy order for SPY for this particular strategy.
+   * Use this to open a Buy order for a particular symbol for this particular strategy.
    * If there is existing Long order for this strategy, then exit and do nothing.
    * If there is existing Short order for this strategy, close that position instead.
    * If there is no existing order for this strategy, go Long.
    * @param strategy What strategy this is using
-   * @param quantity The amount of SPY to buy if there is no open short SPY position for this strategy. Otherwise, we will close the existing Short position.
+   * @param symbol The ticker to buy, e.g. 'SPY'
+   * @param quantity The amount of symbol to buy if there is no open short position for this strategy. Otherwise, we will close the existing Short position.
    */
-  async marketBuySPY(strategy: IOrder_Strategy, quantity: number) {
-    const symbol = "SPY";
+  async marketBuyEquity(
+    strategy: IOrder_Strategy,
+    symbol: string,
+    quantity: number
+  ) {
     const hasLongOrder = hasOpenLongOrder(this.openPositions, strategy);
     const hasShortOrder = hasOpenShortOrder(this.openPositions, strategy);
     if (hasLongOrder) {
@@ -55,7 +59,7 @@ class Order {
       // Currently has open short position, we buy to close that current short position.
       quantity = getOpenPositionQuantity(this.openPositions, strategy);
     }
-    await makeMarketOrder_SPY(INSTRUCTION.BUY, quantity);
+    await makeMarketOrder(symbol, ASSET_TYPE.EQUITY, INSTRUCTION.BUY, quantity);
     const now = Date.now();
     const estimatedBoughtPrice = await getCurrentPrice(symbol);
     setOpenOrder(
@@ -79,15 +83,19 @@ class Order {
   }
 
   /**
-   * Use this to open a market Sell order for SPY for this particular strategy.
+   * Use this to open a market Sell order for a particular symbol for this particular strategy.
    * If there is existing Short order for this strategy, then exit and do nothing.
    * If there is existing Long order for this strategy, close that position instead.
    * If there is no existing order for this strategy, go Short.
    * @param strategy What strategy this is using
-   * @param quantity The amount of SPY to sell if there is no open long SPY position for this strategy. Otherwise, we will close the existing long position.
+   * @param symbol The ticker to sell, e.g. 'SPY'
+   * @param quantity The amount of symbol to sell if there is no open long position for this strategy. Otherwise, we will close the existing long position.
    */
-  async marketSellSPY(strategy: IOrder_Strategy, quantity: number) {
-    const symbol = "SPY";
+  async marketSellEquity(
+    strategy: IOrder_Strategy,
+    symbol: string,
+    quantity: number
+  ) {
     const hasLongOrder = hasOpenLongOrder(this.openPositions, strategy);
     const hasShortOrder = hasOpenShortOrder(this.openPositions, strategy);
     if (hasShortOrder) {
@@ -98,7 +106,12 @@ class Order {
       // Currently has open long position, we sell to close that current long position.
       quantity = getOpenPositionQuantity(this.openPositions, strategy);
     }
-    await makeMarketOrder_SPY(INSTRUCTION.SELL, quantity);
+    await makeMarketOrder(
+      symbol,
+      ASSET_TYPE.EQUITY,
+      INSTRUCTION.SELL,
+      quantity
+    );
     const now = Date.now();
     const estimatedSellPrice = await getCurrentPrice(symbol);
     setOpenOrder(
