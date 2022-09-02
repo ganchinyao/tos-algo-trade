@@ -24,8 +24,10 @@ class Order {
    * Use this to check what is the current position of a particular Strategy to decide whether to still open positions.
    */
   openPositions: IOrder_OpenPositions;
+  hasPendingOrder: boolean; // As making orders take few seconds to fulfil, we use this variable to keep track if we have ongoing order so we do not create another same order when the previous one is still pending.
   constructor() {
     this.openPositions = [];
+    this.hasPendingOrder = false;
     Object.values(IOrder_Strategy).forEach((strategy) => {
       this.openPositions.push({
         strategy,
@@ -49,6 +51,10 @@ class Order {
     symbol: string,
     quantity: number
   ) {
+    if (this.hasPendingOrder) {
+      return;
+    }
+    this.hasPendingOrder = true;
     const hasLongOrder = hasOpenLongOrder(this.openPositions, strategy);
     const hasShortOrder = hasOpenShortOrder(this.openPositions, strategy);
     if (hasLongOrder) {
@@ -80,6 +86,7 @@ class Order {
     if (hasShortOrder) {
       addCompletedTradeToSummaryLogbook(now, strategy);
     }
+    this.hasPendingOrder = false;
   }
 
   /**
@@ -96,6 +103,10 @@ class Order {
     symbol: string,
     quantity: number
   ) {
+    if (this.hasPendingOrder) {
+      return;
+    }
+    this.hasPendingOrder = true;
     const hasLongOrder = hasOpenLongOrder(this.openPositions, strategy);
     const hasShortOrder = hasOpenShortOrder(this.openPositions, strategy);
     if (hasShortOrder) {
@@ -131,6 +142,7 @@ class Order {
     if (hasLongOrder) {
       addCompletedTradeToSummaryLogbook(now, strategy);
     }
+    this.hasPendingOrder = false;
   }
 }
 
