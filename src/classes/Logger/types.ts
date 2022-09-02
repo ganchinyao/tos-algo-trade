@@ -1,16 +1,17 @@
-import { INSTRUCTION } from "@root/utils/order";
-import { IOrder_Strategy } from "@root/classes/Order";
+import { INSTRUCTION } from "../../utils/order";
+import { IOrder_Strategy } from "../Order";
 
 export interface ILogBook_Trade {
-  timestamp: string; // date-time stamp in Unix
+  timestamp: number; // date-time stamp in Unix 13 digits
   instruction: INSTRUCTION;
   quantity: number; // 100
   symbol: string; // 'SPY'
+  price: number; // Estimated executed price derived through calling the current ticker price
   strategy: IOrder_Strategy;
 }
 
 export type ILogBook_Order = {
-  date: string;
+  date: string; // Date in YYYY-MM-DD format
   trades: ILogBook_Trade[];
 };
 
@@ -21,7 +22,7 @@ export type ILogBook_Error = {
 
 export type ILogBook_Summary = {
   date: string;
-  numTrade: number;
+  numCompletedTrades: number; // Completed trade, i.e. open and closed.
   rawP_L: number[]; // E.g. [55, -120, 77] for P/L of 3 trades
   netP_L: number; // E.g 12 for the net P/L of all the trades
 };

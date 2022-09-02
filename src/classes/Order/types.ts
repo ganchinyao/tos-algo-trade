@@ -14,7 +14,7 @@ export enum IOrder_Position {
 export type IOrder_OpenPosition = {
   strategy: IOrder_Strategy;
   currentPosition: IOrder_Position;
-  quantity: number; // Always positive. If short 50, this is still 50. Use the `currentPosition` to determine if it is long or short.
+  quantity: number; // Always positive. If short 50, this is still 50. Use the `currentPosition` to determine if it is long or short. If position is none, then this is 0.
 };
 
 export type IOrder_OpenPositions = IOrder_OpenPosition[];
