@@ -1,6 +1,6 @@
-import { MAX_NUM_TRADES_A_DAY } from "../../Constants";
+import { CONFIG, MAX_NUM_TRADES_A_DAY } from "../../Constants";
 import { getYYYYMMDD } from "../../utils/datetime";
-import { ILogBook_Order, Logger } from "../Logger";
+import { getTodaysOrder, ILogBook_Order, Logger } from "../Logger";
 import {
   IOrder_OpenPosition,
   IOrder_OpenPositions,
@@ -70,11 +70,17 @@ export const setOpenOrder = (
  * @returns True if the trade can proceed, false otherwise
  */
 export const isEligibleForTrading = () => {
-  const date = getYYYYMMDD(Date.now());
-  const currentOrders = Logger.getOrders();
-  const orders = currentOrders.find((order) => order.date === date);
-  if (orders && orders.trades && orders.trades.length >= MAX_NUM_TRADES_A_DAY) {
+  const todaysOrder = getTodaysOrder();
+  if (
+    todaysOrder &&
+    todaysOrder.trades &&
+    todaysOrder.trades.length >= MAX_NUM_TRADES_A_DAY
+  ) {
     // Exceeded maximum number of trades allowed in a day
+    return false;
+  }
+  if (CONFIG.datesUnavailableToTrade.includes(getYYYYMMDD(Date.now()))) {
+    // Today is not available to trade
     return false;
   }
   return true;

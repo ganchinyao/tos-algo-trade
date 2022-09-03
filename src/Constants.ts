@@ -5,3 +5,16 @@
  * or malicious actor managed to send request to this server.
  */
 export const MAX_NUM_TRADES_A_DAY = 20;
+
+/**
+ * Config file to be read/write as a global constant.
+ * We can modify the respective variables by POST to respective API that modifies them.
+ */
+export const CONFIG = {
+  /**
+   * An array of dates that we want to skip trading.
+   * Date must be of format YYYY-MM-DD. E.g. `2022-08-28`.
+   * E.g. of array values: ['2022-08-28', '2022-09-03'] if we want to skip both of these dates.
+   */
+  datesUnavailableToTrade: [] as string[],
+};
