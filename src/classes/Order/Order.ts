@@ -13,6 +13,7 @@ import {
   getOpenPositionQuantity,
   hasOpenLongOrder,
   hasOpenShortOrder,
+  isEligibleForTrading,
   setOpenOrder,
 } from "./utils";
 
@@ -51,7 +52,7 @@ class Order {
     symbol: string,
     quantity: number
   ) {
-    if (this.hasPendingOrder) {
+    if (this.hasPendingOrder || !isEligibleForTrading()) {
       return;
     }
     this.hasPendingOrder = true;
@@ -103,7 +104,7 @@ class Order {
     symbol: string,
     quantity: number
   ) {
-    if (this.hasPendingOrder) {
+    if (this.hasPendingOrder || !isEligibleForTrading()) {
       return;
     }
     this.hasPendingOrder = true;

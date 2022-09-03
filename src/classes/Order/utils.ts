@@ -1,3 +1,6 @@
+import { MAX_NUM_TRADES_A_DAY } from "../../Constants";
+import { getYYYYMMDD } from "../../utils/datetime";
+import { ILogBook_Order, Logger } from "../Logger";
 import {
   IOrder_OpenPosition,
   IOrder_OpenPositions,
@@ -60,4 +63,19 @@ export const setOpenOrder = (
 
   strategyPosition.currentPosition = currentPosition;
   strategyPosition.quantity = quantity;
+};
+
+/**
+ * Check if the user is eligible to trade.
+ * @returns True if the trade can proceed, false otherwise
+ */
+export const isEligibleForTrading = () => {
+  const date = getYYYYMMDD(Date.now());
+  const currentOrders = Logger.getOrders();
+  const orders = currentOrders.find((order) => order.date === date);
+  if (orders && orders.trades && orders.trades.length >= MAX_NUM_TRADES_A_DAY) {
+    // Exceeded maximum number of trades allowed in a day
+    return false;
+  }
+  return true;
 };
