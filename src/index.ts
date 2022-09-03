@@ -9,6 +9,7 @@ import {
   IUnavailableDateRequest,
 } from "./endpointsTypes";
 import { CONFIG } from "./Constants";
+import { startCronJob } from "./cron-jobs";
 
 dotenv.config();
 
@@ -159,7 +160,8 @@ app.post("/add_unavailable_date", (req: Request, res: Response) => {
  * Query: {
  *  type: 'error' | 'summary' | 'orders'
  * }
- * E.g. /logbook?type=order
+ *
+ * E.g. http://localhost:8000/logbook?type=orders
  */
 app.get("/logbook", (req: Request, res: Response) => {
   const type = req.query.type;
@@ -176,4 +178,5 @@ app.get("/logbook", (req: Request, res: Response) => {
 
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+  startCronJob();
 });
