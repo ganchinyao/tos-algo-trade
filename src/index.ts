@@ -3,7 +3,12 @@ import dotenv from "dotenv";
 import { isAuthorized } from "./auth";
 import { addErrorToLogbook, Logger } from "./classes/Logger";
 import { Order } from "./classes/Order";
-import { IMarketBuyRequest, IMarketSellRequest } from "./endpointsTypes";
+import {
+  IMarketBuyRequest,
+  IMarketSellRequest,
+  IUnavailableDateRequest,
+} from "./endpointsTypes";
+import { CONFIG } from "./Constants";
 
 dotenv.config();
 
@@ -106,7 +111,43 @@ app.post("/market_sell", async (req: Request, res: Response) => {
 app.post("/market_close_all", async (req: Request, res: Response) => {
   try {
     await Order.marketCloseAllOpenOrders();
-    res.send("Closed all open orders successfully.");
+    return res.send("Closed all open orders successfully.");
+  } catch (err: any) {
+    addErrorToLogbook(Date.now(), err.toString());
+    return res.status(503).send("Server error");
+  }
+});
+
+/**
+ * Send a POST request to add an unavailable date to trade, so the app will not trade on that particular date.
+ * The format of the unavailable_date must be YYYY-MM-YY, in New York time. e.g. "2022-09-03".
+ *
+ * E.g. curl -X POST -H "Content-Type: application/json" -d '{"auth": "MY_SOME_AUTH", "unavailable_date": "2022-09-03" }' http://localhost:8000/add_unavailable_date
+ *
+ * Request signature:
+ *    body: {
+ *      "auth": string,
+ *      "unavailable_date": string
+ *    }
+ *
+ * Response signature:
+ *    Succeeds: 200 "Closed all open orders successfully."
+ *    Error: 503 "Server error"
+ *
+ */
+app.post("/add_unavailable_date", (req: Request, res: Response) => {
+  try {
+    const body: IUnavailableDateRequest = req.body;
+    const { unavailable_date } = body;
+    if (!unavailable_date) {
+      return res.status(422).send("Wrong body format");
+    }
+
+    CONFIG.datesUnavailableToTrade = [
+      ...CONFIG.datesUnavailableToTrade,
+      unavailable_date,
+    ];
+    return res.send("Added unavailable_date successfully.");
   } catch (err: any) {
     addErrorToLogbook(Date.now(), err.toString());
     return res.status(503).send("Server error");

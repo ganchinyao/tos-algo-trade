@@ -17,3 +17,11 @@ export interface IMarketSellRequest {
   quantity: number;
   strategy: string;
 }
+
+/**
+ * Body request for the POST to /add_unavailable_date
+ */
+export interface IUnavailableDateRequest {
+  auth: string;
+  unavailable_date: string;
+}
