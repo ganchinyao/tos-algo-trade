@@ -43,7 +43,6 @@ class Order {
     if (this.hasPendingOrder || !isEligibleForTrading()) {
       return;
     }
-    this.hasPendingOrder = true;
     const hasLongOrder = hasOpenLongOrder(this.openPositions, strategy);
     const hasShortOrder = hasOpenShortOrder(this.openPositions, strategy);
     if (hasLongOrder) {
@@ -54,6 +53,7 @@ class Order {
       // Currently has open short position, we buy to close that current short position.
       quantity = getOpenPositionQuantity(this.openPositions, strategy);
     }
+    this.hasPendingOrder = true;
     await makeMarketOrder(symbol, ASSET_TYPE.EQUITY, INSTRUCTION.BUY, quantity);
     const now = Date.now();
     const estimatedBoughtPrice = await getCurrentPrice(symbol);
@@ -92,7 +92,6 @@ class Order {
     if (this.hasPendingOrder || !isEligibleForTrading()) {
       return;
     }
-    this.hasPendingOrder = true;
     const hasLongOrder = hasOpenLongOrder(this.openPositions, strategy);
     const hasShortOrder = hasOpenShortOrder(this.openPositions, strategy);
     if (hasShortOrder) {
@@ -103,6 +102,7 @@ class Order {
       // Currently has open long position, we sell to close that current long position.
       quantity = getOpenPositionQuantity(this.openPositions, strategy);
     }
+    this.hasPendingOrder = true;
     await makeMarketOrder(
       symbol,
       ASSET_TYPE.EQUITY,
