@@ -1,8 +1,7 @@
 import { Logger } from ".";
 import { getYYYYMMDD } from "../../utils/datetime";
 import { INSTRUCTION } from "../../utils/order";
-import { IOrder_Strategy } from "../Order";
-import { ILogBook_Error, ILogBook_Order, ILogBook_Trade } from "./types";
+import { ILogBook_Order, ILogBook_Trade } from "./types";
 
 /**
  * Add an order entry into the Logbook
@@ -19,7 +18,7 @@ export const addOrderToLogbook = (
   quantity: number,
   price: number,
   symbol: string,
-  strategy: IOrder_Strategy
+  strategy: string
 ) => {
   const currentOrders = Logger.getOrders();
   const trade: ILogBook_Trade = {
@@ -56,7 +55,7 @@ export const addOrderToLogbook = (
  */
 export const addCompletedTradeToSummaryLogbook = (
   timestamp: number,
-  strategy: IOrder_Strategy
+  strategy: string
 ) => {
   const currentSummary = Logger.getSummary();
   const currentOrders = Logger.getOrders();

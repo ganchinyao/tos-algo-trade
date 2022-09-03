@@ -5,15 +5,12 @@ import {
   addOrderToLogbook,
   getTodaysOrder,
 } from "../Logger";
-import {
-  IOrder_OpenPositions,
-  IOrder_Position,
-  IOrder_Strategy,
-} from "./types";
+import { IOrder_OpenPositions, IOrder_Position } from "./types";
 import {
   getOpenPositionQuantity,
   hasOpenLongOrder,
   hasOpenShortOrder,
+  init,
   isEligibleForTrading,
   setOpenOrder,
 } from "./utils";
@@ -30,13 +27,6 @@ class Order {
   constructor() {
     this.openPositions = [];
     this.hasPendingOrder = false;
-    Object.values(IOrder_Strategy).forEach((strategy) => {
-      this.openPositions.push({
-        strategy,
-        currentPosition: IOrder_Position.NONE,
-        quantity: 0,
-      });
-    });
   }
 
   /**
@@ -48,11 +38,8 @@ class Order {
    * @param symbol The ticker to buy, e.g. 'SPY'
    * @param quantity The amount of symbol to buy if there is no open short position for this strategy. Otherwise, we will close the existing Short position.
    */
-  async marketBuyEquity(
-    strategy: IOrder_Strategy,
-    symbol: string,
-    quantity: number
-  ) {
+  async marketBuyEquity(strategy: string, symbol: string, quantity: number) {
+    init(this.openPositions, strategy);
     if (this.hasPendingOrder || !isEligibleForTrading()) {
       return;
     }
@@ -100,11 +87,8 @@ class Order {
    * @param symbol The ticker to sell, e.g. 'SPY'
    * @param quantity The amount of symbol to sell if there is no open long position for this strategy. Otherwise, we will close the existing long position.
    */
-  async marketSellEquity(
-    strategy: IOrder_Strategy,
-    symbol: string,
-    quantity: number
-  ) {
+  async marketSellEquity(strategy: string, symbol: string, quantity: number) {
+    init(this.openPositions, strategy);
     if (this.hasPendingOrder || !isEligibleForTrading()) {
       return;
     }
@@ -151,7 +135,9 @@ class Order {
    * Market close all current opened positions for all the strategies.
    */
   async marketCloseAllOpenOrders() {
-    const strategies = Object.values(IOrder_Strategy);
+    const strategies = this.openPositions.map((openPosition) => {
+      return openPosition.strategy;
+    });
     for (const strategy of strategies) {
       const hasLongOrder = hasOpenLongOrder(this.openPositions, strategy);
       const hasShortOrder = hasOpenShortOrder(this.openPositions, strategy);

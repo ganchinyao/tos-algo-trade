@@ -1,19 +1,37 @@
 import { CONFIG, MAX_NUM_TRADES_A_DAY } from "../../Constants";
 import { getYYYYMMDD } from "../../utils/datetime";
-import { getTodaysOrder, ILogBook_Order, Logger } from "../Logger";
+import { getTodaysOrder } from "../Logger";
 import {
   IOrder_OpenPosition,
   IOrder_OpenPositions,
   IOrder_Position,
-  IOrder_Strategy,
 } from "./types";
+
+/**
+ * Init the particular strategy if it doesn't exist yet.
+ */
+export const init = (
+  openPositions: IOrder_OpenPositions,
+  strategy: string
+): void => {
+  const openPositionsForStrategy = openPositions.find(
+    (openPosition) => openPosition.strategy === strategy
+  );
+  if (!openPositionsForStrategy) {
+    openPositions.push({
+      strategy,
+      currentPosition: IOrder_Position.NONE,
+      quantity: 0,
+    });
+  }
+};
 
 /**
  * Returns true if this current strategy already has an open Long position. False otherwise.
  */
 export const hasOpenLongOrder = (
   openPositions: IOrder_OpenPositions,
-  strategy: IOrder_Strategy
+  strategy: string
 ): boolean => {
   const strategyPosition = openPositions.find(
     (openPos) => openPos.strategy === strategy
@@ -26,7 +44,7 @@ export const hasOpenLongOrder = (
  */
 export const hasOpenShortOrder = (
   openPositions: IOrder_OpenPositions,
-  strategy: IOrder_Strategy
+  strategy: string
 ): boolean => {
   const strategyPosition = openPositions.find(
     (openPos) => openPos.strategy === strategy
@@ -39,7 +57,7 @@ export const hasOpenShortOrder = (
  */
 export const getOpenPositionQuantity = (
   openPositions: IOrder_OpenPositions,
-  strategy: IOrder_Strategy
+  strategy: string
 ): number => {
   const strategyPosition = openPositions.find(
     (openPos) => openPos.strategy === strategy
@@ -53,7 +71,7 @@ export const getOpenPositionQuantity = (
  */
 export const setOpenOrder = (
   openPositions: IOrder_OpenPositions,
-  strategy: IOrder_Strategy,
+  strategy: string,
   currentPosition: IOrder_Position,
   quantity: number
 ) => {

@@ -1,5 +1,4 @@
 import { INSTRUCTION } from "../../utils/order";
-import { IOrder_Strategy } from "../Order";
 
 export interface ILogBook_Trade {
   timestamp: number; // date-time stamp in Unix 13 digits
@@ -7,7 +6,7 @@ export interface ILogBook_Trade {
   quantity: number; // 100
   symbol: string; // 'SPY'
   price: number; // Estimated executed price derived through calling the current ticker price
-  strategy: IOrder_Strategy;
+  strategy: string;
 }
 
 export type ILogBook_Order = {
