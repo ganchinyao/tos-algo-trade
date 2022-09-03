@@ -13,14 +13,6 @@ const port = process.env.PORT;
 app.use(express.json());
 app.use(isAuthorized);
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Express + TypeScript Server");
-});
-
-app.post("/test", (req: Request, res: Response) => {
-  res.send("POST LOL");
-});
-
 /**
  * Send a POST request to put in a Market Buy Order for a particular ticker.
  * If there is already an opened Short order for this strategy that is not closed yet, we will proceed to close that instead.
