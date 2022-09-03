@@ -110,3 +110,13 @@ export const addErrorToLogbook = (timestamp: number, error: any) => {
     });
   }
 };
+
+/**
+ * Get the orders executed today, or return undefined if there is no order executed for today yet.
+ * @returns Orders from the logbook executed for today, or undefined if there is no order executed for today yet.
+ */
+export const getTodaysOrder = () => {
+  const currentOrders = Logger.getOrders();
+  const date = getYYYYMMDD(Date.now());
+  return currentOrders.find((order) => order.date === date);
+};

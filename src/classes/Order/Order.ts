@@ -3,6 +3,7 @@ import { getCurrentPrice } from "../../utils/quotes";
 import {
   addCompletedTradeToSummaryLogbook,
   addOrderToLogbook,
+  getTodaysOrder,
 } from "../Logger";
 import {
   IOrder_OpenPositions,
@@ -144,6 +145,38 @@ class Order {
       addCompletedTradeToSummaryLogbook(now, strategy);
     }
     this.hasPendingOrder = false;
+  }
+
+  /**
+   * Market close all current opened positions for all the strategies.
+   */
+  async marketCloseAllOpenOrders() {
+    const strategies = Object.values(IOrder_Strategy);
+    for (const strategy of strategies) {
+      const hasLongOrder = hasOpenLongOrder(this.openPositions, strategy);
+      const hasShortOrder = hasOpenShortOrder(this.openPositions, strategy);
+      const todaysOrder = getTodaysOrder();
+      if (todaysOrder) {
+        const ordersForStrategy = todaysOrder.trades.filter(
+          (order) => order.strategy === strategy
+        );
+        const lastOrderOfStrategy =
+          ordersForStrategy[ordersForStrategy.length - 1];
+        if (hasLongOrder) {
+          await this.marketSellEquity(
+            lastOrderOfStrategy.strategy,
+            lastOrderOfStrategy.symbol,
+            lastOrderOfStrategy.quantity
+          );
+        } else if (hasShortOrder) {
+          await this.marketBuyEquity(
+            lastOrderOfStrategy.strategy,
+            lastOrderOfStrategy.symbol,
+            lastOrderOfStrategy.quantity
+          );
+        }
+      }
+    }
   }
 }
 
