@@ -129,3 +129,13 @@ export const getTodaysSummary = () => {
   const date = getYYYYMMDD(Date.now());
   return currentSummary.find((summary) => summary.date === date);
 };
+
+/**
+ * Get the errors that happened today, if any.
+ * @returns Errors that were added to the logbook today, or undefined.
+ */
+export const getTodaysError = () => {
+  const currentErrors = Logger.getErrors();
+  const date = getYYYYMMDD(Date.now());
+  return currentErrors.find((error) => error.date === date);
+};

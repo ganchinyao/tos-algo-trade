@@ -1,6 +1,9 @@
 import cron from "node-cron";
 import { Order } from "../classes/Order";
-import sendTodaySummaryToTelegram from "./telegram-job";
+import {
+  sendTodaysErrorToTelegram,
+  sendTodaySummaryToTelegram,
+} from "./telegram-job";
 
 const startCronJob = () => {
   // Run this job every Monday-Friday at 15:50 New York time.
@@ -9,6 +12,7 @@ const startCronJob = () => {
     async function () {
       await Order.marketCloseAllOpenOrders();
       sendTodaySummaryToTelegram();
+      sendTodaysErrorToTelegram();
     },
     {
       timezone: "America/New_York",

@@ -1,17 +1,24 @@
-import { getTodaysOrder, getTodaysSummary } from "../classes/Logger";
+import {
+  getTodaysError,
+  getTodaysOrder,
+  getTodaysSummary,
+} from "../classes/Logger";
 import { getHHmm, getYYYYMMDD } from "../utils/datetime";
 import { sendTelegramBotMsg } from "../utils/telegram";
+
+/**
+ * Format these special characters because telegram requires these character to append '\', since these special characters have special meaning on its own to telegram.
+ */
+const formatDot = (str: string) => str.replace(/\./g, "\\.");
+const formatDash = (str: string) => str.replace(/-/g, "\\-");
+const formatComma = (str: string) => str.replace(/,/g, ", ");
+const formatUnderscore = (str: string) => str.replace(/_/g, "\\_");
 
 /**
  * Send a summary to a telegram bot everyday.
  * The summary includes: Number of completed trades, Raw P/L, Net P/L, and Time and Order type of each trades.
  */
-const sendTodaySummaryToTelegram = () => {
-  const formatDot = (str: string) => str.replace(/\./g, "\\.");
-  const formatDash = (str: string) => str.replace(/-/g, "\\-");
-  const formatComma = (str: string) => str.replace(/,/g, ", ");
-  const formatUnderscore = (str: string) => str.replace(/_/g, "\\_");
-
+export const sendTodaySummaryToTelegram = () => {
   const date = Date.now();
   const orders = getTodaysOrder();
 
@@ -62,4 +69,18 @@ const sendTodaySummaryToTelegram = () => {
   }
 };
 
-export default sendTodaySummaryToTelegram;
+/**
+ * Send a message to telegram to inform that today has some error event that was logged to the logbook.
+ * If today has no error, skip.
+ * Then, manually call /logbook?type=error to see what are the error code
+ */
+export const sendTodaysErrorToTelegram = () => {
+  const errors = getTodaysError();
+  const now = Date.now();
+  if (errors) {
+    sendTelegramBotMsg({
+      msg: `*${formatDash(getYYYYMMDD(now))}*: There is error!!!`,
+      parseMode: "MarkdownV2",
+    });
+  }
+};
