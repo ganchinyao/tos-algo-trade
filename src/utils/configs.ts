@@ -19,3 +19,17 @@ export const getClientId = () => {
 export const getAccountId = () => {
   return process.env.ACCOUNT_ID as string;
 };
+
+/**
+ * Get the telegram bot token to send report everyday
+ */
+export const getTelegramBotToken = () => {
+  return process.env.TELEGRAM_TOKEN as string;
+};
+
+/**
+ * Get the telegram chat id to send the bot message to
+ */
+export const getTelegramChatId = () => {
+  return process.env.TELEGRAM_CHAT_ID as string;
+};

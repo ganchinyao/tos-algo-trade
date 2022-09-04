@@ -119,3 +119,13 @@ export const getTodaysOrder = () => {
   const date = getYYYYMMDD(Date.now());
   return currentOrders.find((order) => order.date === date);
 };
+
+/**
+ * Get the summary of orders executed today, or return undefined if there is no order executed for today yet.
+ * @returns Summary from the logbook executed for today, or undefined if there is no order executed for today yet.
+ */
+export const getTodaysSummary = () => {
+  const currentSummary = Logger.getSummary();
+  const date = getYYYYMMDD(Date.now());
+  return currentSummary.find((summary) => summary.date === date);
+};
