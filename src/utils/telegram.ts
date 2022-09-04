@@ -12,6 +12,9 @@ export const sendTelegramBotMsg = (options: {
   const { msg, parseMode } = options;
   const token = getTelegramBotToken();
   const chatid = getTelegramChatId();
+  if (!token || !chatid) {
+    return;
+  }
   const url = `https://api.telegram.org/bot${token}/sendMessage`;
 
   axios.get(url, {
