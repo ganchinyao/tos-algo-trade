@@ -101,5 +101,6 @@ export const isEligibleForTrading = () => {
     // Today is not available to trade
     return false;
   }
-  return true;
+
+  return CONFIG.eligibleToTrade;
 };

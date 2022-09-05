@@ -48,7 +48,7 @@ app.post("/market_buy", async (req: Request, res: Response) => {
       return res.status(422).send("Wrong body format");
     }
 
-    await Order.marketBuyEquity(strategy, symbol, quantity);
+    await Order.marketBuyEquity(strategy, symbol, Number(quantity));
     return res.send("market_buy finishes!");
   } catch (err: any) {
     addErrorToLogbook(Date.now(), err.toString());
@@ -85,7 +85,7 @@ app.post("/market_sell", async (req: Request, res: Response) => {
       return res.status(422).send("Wrong body format");
     }
 
-    await Order.marketSellEquity(strategy, symbol, quantity);
+    await Order.marketSellEquity(strategy, symbol, Number(quantity));
     return res.send("market_sell finishes!");
   } catch (err: any) {
     addErrorToLogbook(Date.now(), err.toString());
@@ -174,6 +174,22 @@ app.get("/logbook", (req: Request, res: Response) => {
       return res.json(Logger.getErrors());
   }
   return res.send("Please add in a query");
+});
+
+/**
+ * A kill switch to quickly stop all trading. The bot will not executed anymore trades.
+ */
+app.get("/stop", (req: Request, res: Response) => {
+  CONFIG.eligibleToTrade = false;
+  return res.status(503); // Purposely send 503 to confuse web scrapper.
+});
+
+/**
+ * Resume the kill switch done in /stop.
+ */
+app.get("/start", (req: Request, res: Response) => {
+  CONFIG.eligibleToTrade = true;
+  return res.status(503); // Purposely send 503 to confuse web scrapper.
 });
 
 app.listen(port, () => {

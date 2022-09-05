@@ -8,7 +8,7 @@ export const MAX_NUM_TRADES_A_DAY = 20;
 
 /**
  * Config file to be read/write as a global constant.
- * We can modify the respective variables by POST to respective API that modifies them.
+ * We can modify the respective variables by POST/GET to respective API that modifies them.
  */
 export const CONFIG = {
   /**
@@ -17,4 +17,9 @@ export const CONFIG = {
    * E.g. of array values: ['2022-08-28', '2022-09-03'] if we want to skip both of these dates.
    */
   datesUnavailableToTrade: [] as string[],
+  /**
+   * If false, stops all trading event.
+   * Use as a kill switch.
+   */
+  eligibleToTrade: true,
 };
