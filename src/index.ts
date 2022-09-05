@@ -177,6 +177,13 @@ app.get("/logbook", (req: Request, res: Response) => {
 });
 
 /**
+ * View the list of unavailable dates to trade.
+ */
+app.get("/unavailable_date", (req: Request, res: Response) => {
+  return res.json(CONFIG.datesUnavailableToTrade);
+});
+
+/**
  * A kill switch to quickly stop all trading. The bot will not executed anymore trades.
  */
 app.get("/stop", (req: Request, res: Response) => {
