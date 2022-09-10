@@ -25,3 +25,23 @@ export const getYYYYMMDD = (timestamp: number) => {
 export const getHHmm = (timestamp: number) => {
   return dayjs(timestamp).tz("America/New_York").format("HH:mm").toString();
 };
+
+/**
+ * Check if the current hour (in New York Time) is equals to the hour passed in.
+ * @param hr The hour passed in to check.
+ * @returns True if the current hour is equal to the hour passed in.
+ */
+export const isCurrentHourEquals = (hr: string | number) => {
+  const currentHr = dayjs(Date.now()).tz("America/New_York").format("HH");
+  return Number(currentHr) === Number(hr);
+};
+
+/**
+ * Check if the current minute (in New York Time) is more than the minute passed in.
+ * @param min The minute passed in to check.
+ * @returns True if the current minute is more than the minute passed in.
+ */
+export const isCurrentMinMoreThan = (min: string | number) => {
+  const currentMin = dayjs(Date.now()).tz("America/New_York").format("mm");
+  return Number(currentMin) > Number(min);
+};

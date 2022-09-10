@@ -1,5 +1,9 @@
 import { CONFIG, MAX_NUM_TRADES_A_DAY } from "../../Constants";
-import { getYYYYMMDD } from "../../utils/datetime";
+import {
+  getYYYYMMDD,
+  isCurrentHourEquals,
+  isCurrentMinMoreThan,
+} from "../../utils/datetime";
 import { getTodaysOrder } from "../Logger";
 import {
   IOrder_OpenPosition,
@@ -99,6 +103,11 @@ export const isEligibleForTrading = () => {
   }
   if (CONFIG.datesUnavailableToTrade.includes(getYYYYMMDD(Date.now()))) {
     // Today is not available to trade
+    return false;
+  }
+  if (isCurrentHourEquals(15) && isCurrentMinMoreThan(50)) {
+    // Do not allow the user to trade after 15:50 New York Time.
+    // This is because the cron_job will run at 15:50 to exit all trades.
     return false;
   }
 
