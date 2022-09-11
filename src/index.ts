@@ -5,6 +5,7 @@ import { addErrorToLogbook, Logger } from "./classes/Logger";
 import { Order } from "./classes/Order";
 import {
   IMarketBuyRequest,
+  IMarketOrderRequest,
   IMarketSellRequest,
   IUnavailableDateRequest,
 } from "./endpointsTypes";
@@ -87,6 +88,54 @@ app.post("/market_sell", async (req: Request, res: Response) => {
 
     await Order.marketSellEquity(strategy, symbol, Number(quantity));
     return res.send("market_sell finishes!");
+  } catch (err: any) {
+    addErrorToLogbook(Date.now(), err.toString());
+    return res.status(503).send("Server error");
+  }
+});
+
+/**
+ * Send a POST request to put in a Market Buy or Market Sell Order for a particular ticker.
+ * This is the same as calling /market_buy or /market_sell, except we instruct the buy or sell action through the body request.
+ *
+ * If we send in a Market Buy and there is already an opened Short order for this strategy that is not closed yet, we will proceed to close that instead.
+ * If we send in a Market Buy and there is already an opened Long order for this strategy that is not closed yet, do nothing.
+ * If we send in a Market Sell and there is already an opened Long order for this strategy that is not closed yet, we will proceed to close that instead.
+ * If we send in a Market Sell and there is already an opened Short order for this strategy that is not closed yet, do nothing.
+ *
+ * E.g. curl -X POST -H "Content-Type: application/json" -d '{"auth": "MY_SOME_AUTH", "symbol": "SPY", "quantity": 1, "strategy": "My Strategy Name", "action": "buy"}' http://localhost:8000/market_order
+ *
+ * Request signature:
+ *    body: {
+ *      "auth": string,
+ *      "symbol": string,
+ *      "quantity": number,
+ *      "strategy": string
+ *      "action": "buy" | "sell"
+ *    }
+ *
+ * Response signature:
+ *    Succeeds: 200 "market_order for {buy|sell} finishes!"
+ *    Failed to pass in 'symbol' or 'quantity' or 'strategy' or 'action': 422 "Wrong body format"
+ *    Error: 503 "Server error"
+ *
+ */
+app.post("/market_order", async (req: Request, res: Response) => {
+  try {
+    const body: IMarketOrderRequest = req.body;
+    const { symbol, quantity, strategy, action } = body;
+    if (!symbol || !quantity || !strategy || !action) {
+      return res.status(422).send("Wrong body format");
+    }
+
+    switch (action) {
+      case "buy":
+        await Order.marketBuyEquity(strategy, symbol, Number(quantity));
+        return res.send("market_order for buy finishes!");
+      case "sell":
+        await Order.marketSellEquity(strategy, symbol, Number(quantity));
+        return res.send("market_order for sell finishes!");
+    }
   } catch (err: any) {
     addErrorToLogbook(Date.now(), err.toString());
     return res.status(503).send("Server error");

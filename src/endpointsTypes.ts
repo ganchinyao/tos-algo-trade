@@ -25,3 +25,14 @@ export interface IUnavailableDateRequest {
   auth: string;
   unavailable_date: string;
 }
+
+/**
+ * Body request for the POST to /market_order
+ */
+export interface IMarketOrderRequest {
+  auth: string;
+  symbol: string;
+  quantity: number;
+  strategy: string;
+  action: "buy" | "sell";
+}
