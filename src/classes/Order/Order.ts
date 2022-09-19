@@ -1,5 +1,4 @@
 import { ASSET_TYPE, INSTRUCTION, makeMarketOrder } from "../../utils/order";
-import { getCurrentPrice } from "../../utils/quotes";
 import {
   addCompletedTradeToSummaryLogbook,
   addOrderToLogbook,
@@ -7,6 +6,7 @@ import {
 } from "../Logger";
 import { IOrder_OpenPositions, IOrder_Position } from "./types";
 import {
+  getFilledPriceOfLatestOrder,
   getOpenPositionQuantity,
   hasOpenLongOrder,
   hasOpenShortOrder,
@@ -56,7 +56,10 @@ class Order {
     this.hasPendingOrder = true;
     await makeMarketOrder(symbol, ASSET_TYPE.EQUITY, INSTRUCTION.BUY, quantity);
     const now = Date.now();
-    const estimatedBoughtPrice = await getCurrentPrice(symbol);
+    const filledPrice = await getFilledPriceOfLatestOrder({
+      symbol,
+      timestamp: now,
+    });
     setOpenOrder(
       this.openPositions,
       strategy,
@@ -67,7 +70,7 @@ class Order {
       now,
       hasShortOrder ? INSTRUCTION.BUY_TO_CLOSE : INSTRUCTION.BUY_TO_OPEN,
       quantity,
-      estimatedBoughtPrice,
+      filledPrice,
       symbol,
       strategy
     );
@@ -110,7 +113,10 @@ class Order {
       quantity
     );
     const now = Date.now();
-    const estimatedSellPrice = await getCurrentPrice(symbol);
+    const filledPrice = await getFilledPriceOfLatestOrder({
+      symbol,
+      timestamp: now,
+    });
     setOpenOrder(
       this.openPositions,
       strategy,
@@ -121,7 +127,7 @@ class Order {
       now,
       hasLongOrder ? INSTRUCTION.SELL_TO_CLOSE : INSTRUCTION.SELL_TO_OPEN,
       quantity,
-      estimatedSellPrice,
+      filledPrice,
       symbol,
       strategy
     );

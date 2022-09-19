@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+import { EActivityType, EOrderStatus, getOrdersByAccount } from "../../api";
 import { CONFIG, MAX_NUM_TRADES_A_DAY } from "../../Constants";
 import {
   getYYYYMMDD,
@@ -112,4 +114,39 @@ export const isEligibleForTrading = () => {
   }
 
   return CONFIG.eligibleToTrade;
+};
+
+/**
+ * Get the filled price of the latest order for a particular symbol at a particular date of the timestamp, or 0 if there is no filled order for that symbol.
+ * Only works for orders with 1 execution leg.
+ * @param params An object containing the `symbol` to get the latest filled price, a `timestamp` which is  Unix 13 digist number, and an optional `isFromAPI`,
+ * which if true, we only consider orders sent using api, that starts with API_OMS_REST. If false, we consider all types of orders.
+ * @returns The latest filled price for this symbol on this date, or 0 if there is no filled order.
+ */
+
+export const getFilledPriceOfLatestOrder = async (params: {
+  symbol: string;
+  timestamp: number;
+  isFromAPI?: boolean;
+}) => {
+  const { symbol, timestamp, isFromAPI = true } = params;
+  let orders = await getOrdersByAccount({
+    fromEnteredTime: getYYYYMMDD(timestamp),
+    status: EOrderStatus.FILLED,
+  });
+  orders = orders
+    .filter((order) => (isFromAPI ? order.tag.includes("API") : true))
+    .filter((order) => order.orderLegCollection[0].instrument.symbol === symbol)
+    .sort((a, b) => dayjs(b.closeTime).unix() - dayjs(a.closeTime).unix());
+  if (orders.length > 0) {
+    const currentOrder = orders[0]; // Get the latest order that was tagged with "API"
+    const execution = currentOrder.orderActivityCollection.find(
+      (activity) => activity.activityType === EActivityType.EXECUTION
+    );
+    if (execution) {
+      const price = execution.executionLegs[0].price;
+      return price;
+    }
+  }
+  return 0;
 };
