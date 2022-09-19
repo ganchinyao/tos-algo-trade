@@ -45,3 +45,16 @@ export const isCurrentMinMoreThan = (min: string | number) => {
   const currentMin = dayjs(Date.now()).tz("America/New_York").format("mm");
   return Number(currentMin) > Number(min);
 };
+
+/**
+ * Returns the timestamp in the format of YYYY-MM-W{n}, where n represent the week number of the month.
+ * For example, 2022-09-w1 for 1-7th of Sept, and 2022-09-w2 for 8-14th Sept.
+ * @param timestamp Unix 13 digits number
+ * @returns A string in `YYYY-MM-W{n}` format, e.g. `2022-12-w5`
+ */
+export const getYYYYMMWeek = (timestamp: number) => {
+  const dateTime = dayjs(timestamp).tz("America/New_York");
+  const date = dateTime.get("date");
+  const weekNumber = Math.ceil(date / 7);
+  return `${dateTime.format("YYYY-MM")}-w${weekNumber}`;
+};

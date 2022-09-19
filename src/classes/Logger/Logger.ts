@@ -1,45 +1,25 @@
 import {
-  ILogBook_Error,
-  ILogBook_Order,
-  ILogBook_Summary,
-  LogBook,
-} from "./types";
+  readLogbookErrorsFromDisk,
+  readLogbookOrderFromDisk,
+  readLogbookSummaryFromDisk,
+} from "../../utils/file";
 
 /**
  * Use this singleton instance to log the trades into a logbook
  */
 class Logger {
-  logbook: LogBook;
-  constructor() {
-    this.logbook = {
-      orders: [],
-      errors: [],
-      summary: [],
-    };
+  constructor() {}
+
+  getOrders(timestamp: number = Date.now()) {
+    return readLogbookOrderFromDisk(timestamp);
   }
 
-  addOrder(order: ILogBook_Order) {
-    this.logbook.orders.push(order);
+  getErrors(timestamp: number = Date.now()) {
+    return readLogbookErrorsFromDisk(timestamp);
   }
 
-  addError(error: ILogBook_Error) {
-    this.logbook.errors.push(error);
-  }
-
-  addSummary(summary: ILogBook_Summary) {
-    this.logbook.summary.push(summary);
-  }
-
-  getOrders() {
-    return this.logbook.orders;
-  }
-
-  getErrors() {
-    return this.logbook.errors;
-  }
-
-  getSummary() {
-    return this.logbook.summary;
+  getSummary(timestamp: number = Date.now()) {
+    return readLogbookSummaryFromDisk(timestamp);
   }
 }
 

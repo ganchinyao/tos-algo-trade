@@ -1,5 +1,10 @@
 import { Logger } from ".";
 import { getYYYYMMDD } from "../../utils/datetime";
+import {
+  writeLogbookErrorsToDisk,
+  writeLogbookOrdersToDisk,
+  writeLogbookSummaryToDisk,
+} from "../../utils/file";
 import { INSTRUCTION } from "../../utils/order";
 import { ILogBook_Order, ILogBook_Trade } from "./types";
 
@@ -20,7 +25,7 @@ export const addOrderToLogbook = (
   symbol: string,
   strategy: string
 ) => {
-  const currentOrders = Logger.getOrders();
+  const currentOrders = Logger.getOrders(timestamp);
   const trade: ILogBook_Trade = {
     timestamp,
     instruction,
@@ -41,6 +46,7 @@ export const addOrderToLogbook = (
       trades: [trade],
     });
   }
+  writeLogbookOrdersToDisk(timestamp, currentOrders);
 };
 
 /**
@@ -57,8 +63,8 @@ export const addCompletedTradeToSummaryLogbook = (
   timestamp: number,
   strategy: string
 ) => {
-  const currentSummary = Logger.getSummary();
-  const currentOrders = Logger.getOrders();
+  const currentSummary = Logger.getSummary(timestamp);
+  const currentOrders = Logger.getOrders(timestamp);
   const date = getYYYYMMDD(timestamp);
   const orders = currentOrders.find(
     (order) => order.date === date
@@ -86,6 +92,7 @@ export const addCompletedTradeToSummaryLogbook = (
       netP_L: p_l,
     });
   }
+  writeLogbookSummaryToDisk(timestamp, currentSummary);
 };
 
 /**
@@ -94,7 +101,7 @@ export const addCompletedTradeToSummaryLogbook = (
  * @param error The error message
  */
 export const addErrorToLogbook = (timestamp: number, error: any) => {
-  const currentErrors = Logger.getErrors();
+  const currentErrors = Logger.getErrors(timestamp);
   const date = getYYYYMMDD(timestamp);
   const errors = currentErrors.find((err) => err.date === date);
 
@@ -108,6 +115,7 @@ export const addErrorToLogbook = (timestamp: number, error: any) => {
       err: [error],
     });
   }
+  writeLogbookErrorsToDisk(timestamp, currentErrors);
 };
 
 /**

@@ -1,0 +1,1 @@
+# This folder will store all the errors encountered thus far.
