@@ -5,6 +5,8 @@ import {
   ILogBook_Order,
   ILogBook_Summary,
 } from "../classes/Logger";
+import path from "path";
+import { PATH_ERRORS, PATH_ORDERS, PATH_SUMMARY } from "../Constants";
 
 /**
  * Write an Object as a string into a file path on the disk.
@@ -25,7 +27,7 @@ export const writeLogbookOrdersToDisk = (
   timestamp: number,
   orders: ILogBook_Order[]
 ) => {
-  const filePath = `./db/orders/${getYYYYMMWeek(timestamp)}.json`;
+  const filePath = `${PATH_ORDERS}/${getYYYYMMWeek(timestamp)}.json`;
   writeJSONFile(filePath, orders);
 };
 
@@ -39,7 +41,7 @@ export const writeLogbookErrorsToDisk = (
   timestamp: number,
   error: ILogBook_Error[]
 ) => {
-  const filePath = `./db/errors/${getYYYYMMWeek(timestamp)}.json`;
+  const filePath = `${PATH_ERRORS}/${getYYYYMMWeek(timestamp)}.json`;
   writeJSONFile(filePath, error);
 };
 
@@ -53,7 +55,7 @@ export const writeLogbookSummaryToDisk = (
   timestamp: number,
   summary: ILogBook_Summary[]
 ) => {
-  const filePath = `./db/summary/${getYYYYMMWeek(timestamp)}.json`;
+  const filePath = `${PATH_SUMMARY}/${getYYYYMMWeek(timestamp)}.json`;
   writeJSONFile(filePath, summary);
 };
 
@@ -75,38 +77,71 @@ export const readJSONFile = (filePath: string, defaultVal: Object = {}) => {
 /**
  * Read the logbook Order associated with the timestamp from the Disk, or an empty object [] if there is no such logbook.
  * This will read the file in the format `YYYY-MM-W{n}.json`, e.g. `2022-09-w1.json` for any dates that are 1st-7th of September.
- * @param timestamp Unix number in 13 digits
+ * @param timestamp Unix number in 13 digits. If not supplied, proceed to read all `.json` files in the directory.
  * @returns The logbook Order object, or empty array [] if there is no associated logbook on that timestamp.
  */
 export const readLogbookOrderFromDisk = (
-  timestamp: number
+  timestamp?: number
 ): ILogBook_Order[] => {
-  const filePath = `./db/orders/${getYYYYMMWeek(timestamp)}.json`;
+  if (!timestamp) {
+    let result: ILogBook_Order[] = [];
+    const jsonsInDir = fs
+      .readdirSync(PATH_ORDERS)
+      .filter((file) => path.extname(file) === ".json");
+    jsonsInDir.forEach((file) => {
+      const order = readJSONFile(`${PATH_ORDERS}/${file}`, []);
+      result = result.concat(order);
+    });
+    return result;
+  }
+  const filePath = `${PATH_ORDERS}/${getYYYYMMWeek(timestamp)}.json`;
   return readJSONFile(filePath, []);
 };
 
 /**
  * Read the logbook Errors associated with the timestamp from the Disk, or an empty object [] if there is no such logbook.
  * This will read the file in the format `YYYY-MM-W{n}.json`, e.g. `2022-09-w1.json` for any dates that are 1st-7th of September.
- * @param timestamp Unix number in 13 digits
+ * @param timestamp Unix number in 13 digits. If not supplied, proceed to read all `.json` files in the directory.
  * @returns The logbook Errors object, or empty array [] if there is no associated logbook on that timestamp.
  */
 export const readLogbookErrorsFromDisk = (
-  timestamp: number
+  timestamp?: number
 ): ILogBook_Error[] => {
-  const filePath = `./db/errors/${getYYYYMMWeek(timestamp)}.json`;
+  if (!timestamp) {
+    let result: ILogBook_Error[] = [];
+    const jsonsInDir = fs
+      .readdirSync(PATH_ERRORS)
+      .filter((file) => path.extname(file) === ".json");
+    jsonsInDir.forEach((file) => {
+      const order = readJSONFile(`${PATH_ERRORS}/${file}`, []);
+      result = result.concat(order);
+    });
+    return result;
+  }
+  const filePath = `${PATH_ERRORS}/${getYYYYMMWeek(timestamp)}.json`;
   return readJSONFile(filePath, []);
 };
 
 /**
  * Read the logbook Summary associated with the timestamp from the Disk, or an empty object [] if there is no such logbook.
  * This will read the file in the format `YYYY-MM-W{n}.json`, e.g. `2022-09-w1.json` for any dates that are 1st-7th of September.
- * @param timestamp Unix number in 13 digits
+ * @param timestamp Unix number in 13 digits. If not supplied, proceed to read all `.json` files in the directory.
  * @returns The logbook Summary object, or empty array [] if there is no associated logbook on that timestamp.
  */
 export const readLogbookSummaryFromDisk = (
-  timestamp: number
+  timestamp?: number
 ): ILogBook_Summary[] => {
-  const filePath = `./db/summary/${getYYYYMMWeek(timestamp)}.json`;
+  if (!timestamp) {
+    let result: ILogBook_Summary[] = [];
+    const jsonsInDir = fs
+      .readdirSync(PATH_SUMMARY)
+      .filter((file) => path.extname(file) === ".json");
+    jsonsInDir.forEach((file) => {
+      const order = readJSONFile(`${PATH_SUMMARY}/${file}`, []);
+      result = result.concat(order);
+    });
+    return result;
+  }
+  const filePath = `${PATH_SUMMARY}/${getYYYYMMWeek(timestamp)}.json`;
   return readJSONFile(filePath, []);
 };

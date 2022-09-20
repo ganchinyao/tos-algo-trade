@@ -7,6 +7,13 @@
 export const MAX_NUM_TRADES_A_DAY = 20;
 
 /**
+ * Path to store the JSON file in hard disk.
+ */
+export const PATH_ORDERS = "./db/orders";
+export const PATH_ERRORS = "./db/errors";
+export const PATH_SUMMARY = "./db/summary";
+
+/**
  * Config file to be read/write as a global constant.
  * We can modify the respective variables by POST/GET to respective API that modifies them.
  */
