@@ -33,3 +33,17 @@ export const getTelegramBotToken = () => {
 export const getTelegramChatId = () => {
   return process.env.TELEGRAM_CHAT_ID as string;
 };
+
+export interface Config {
+  /**
+   * An array of dates that we want to skip trading.
+   * Date must be of format YYYY-MM-DD. E.g. `2022-08-28`.
+   * E.g. of array values: ['2022-08-28', '2022-09-03'] if we want to skip both of these dates.
+   */
+  datesUnavailableToTrade: string[];
+  /**
+   * If false, stops all trading event.
+   * Use as a kill switch.
+   */
+  eligibleToTrade: boolean;
+}

@@ -20,10 +20,11 @@ import {
   IMarketSellRequest,
   IUnavailableDateRequest,
 } from "./endpointsTypes";
-import { CONFIG } from "./Constants";
 import { startCronJob } from "./cron-jobs";
 import dayjs from "dayjs";
 import { getUnixFromYYYYMMWeek } from "./utils/datetime";
+import { readConfigFromDisk, writeConfigToDisk } from "./utils/file";
+import { Config } from "./utils";
 
 dotenv.config();
 
@@ -205,11 +206,15 @@ app.post("/add_unavailable_date", (req: Request, res: Response) => {
     if (!unavailable_date) {
       return res.status(422).send("Wrong body format");
     }
-
-    CONFIG.datesUnavailableToTrade = [
-      ...CONFIG.datesUnavailableToTrade,
-      unavailable_date,
-    ];
+    const currentConfig = readConfigFromDisk();
+    const newConfig: Config = {
+      ...currentConfig,
+      datesUnavailableToTrade: [
+        ...currentConfig.datesUnavailableToTrade,
+        unavailable_date,
+      ],
+    };
+    writeConfigToDisk(newConfig);
     return res.send("Added unavailable_date successfully.");
   } catch (err: any) {
     addErrorToLogbook(Date.now(), err.toString());
@@ -282,26 +287,37 @@ app.get("/logbook", (req: Request, res: Response) => {
 });
 
 /**
- * View the list of unavailable dates to trade.
+ * View the Config object in disk.
  */
-app.get("/unavailable_date", (req: Request, res: Response) => {
-  return res.json(CONFIG.datesUnavailableToTrade);
+app.get("/config", (req: Request, res: Response) => {
+  const config = readConfigFromDisk();
+  return res.json(config);
 });
 
 /**
  * A kill switch to quickly stop all trading. The bot will not executed anymore trades.
  */
 app.get("/stop", (req: Request, res: Response) => {
-  CONFIG.eligibleToTrade = false;
-  return res.status(503); // Purposely send 503 to confuse web scrapper.
+  const currentConfig = readConfigFromDisk();
+  const newConfig: Config = {
+    ...currentConfig,
+    eligibleToTrade: false,
+  };
+  writeConfigToDisk(newConfig);
+  return res.status(200);
 });
 
 /**
  * Resume the kill switch done in /stop.
  */
 app.get("/start", (req: Request, res: Response) => {
-  CONFIG.eligibleToTrade = true;
-  return res.status(503); // Purposely send 503 to confuse web scrapper.
+  const currentConfig = readConfigFromDisk();
+  const newConfig: Config = {
+    ...currentConfig,
+    eligibleToTrade: true,
+  };
+  writeConfigToDisk(newConfig);
+  return res.status(200);
 });
 
 app.listen(port, () => {

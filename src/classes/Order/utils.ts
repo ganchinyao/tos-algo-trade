@@ -1,11 +1,12 @@
 import dayjs from "dayjs";
 import { EActivityType, EOrderStatus, getOrdersByAccount } from "../../api";
-import { CONFIG, MAX_NUM_TRADES_A_DAY } from "../../Constants";
+import { MAX_NUM_TRADES_A_DAY } from "../../Constants";
 import {
   getYYYYMMDD,
   isCurrentHourEquals,
   isCurrentMinMoreThan,
 } from "../../utils/datetime";
+import { readConfigFromDisk } from "../../utils/file";
 import { getTodaysOrder } from "../Logger";
 import {
   IOrder_OpenPosition,
@@ -103,7 +104,8 @@ export const isEligibleForTrading = () => {
     // Exceeded maximum number of trades allowed in a day
     return false;
   }
-  if (CONFIG.datesUnavailableToTrade.includes(getYYYYMMDD(Date.now()))) {
+  const config = readConfigFromDisk();
+  if (config.datesUnavailableToTrade.includes(getYYYYMMDD(Date.now()))) {
     // Today is not available to trade
     return false;
   }
@@ -113,7 +115,7 @@ export const isEligibleForTrading = () => {
     return false;
   }
 
-  return CONFIG.eligibleToTrade;
+  return config.eligibleToTrade;
 };
 
 /**

@@ -6,7 +6,13 @@ import {
   ILogBook_Summary,
 } from "../classes/Logger";
 import path from "path";
-import { PATH_ERRORS, PATH_ORDERS, PATH_SUMMARY } from "../Constants";
+import {
+  PATH_CONFIG,
+  PATH_ERRORS,
+  PATH_ORDERS,
+  PATH_SUMMARY,
+} from "../Constants";
+import { Config } from "./configs";
 
 /**
  * Write an Object as a string into a file path on the disk.
@@ -143,5 +149,23 @@ export const readLogbookSummaryFromDisk = (
     return result;
   }
   const filePath = `${PATH_SUMMARY}/${getYYYYMMWeek(timestamp)}.json`;
+  return readJSONFile(filePath, []);
+};
+
+/**
+ * Write the global Config to disk.
+ * @param config The Config object
+ */
+export const writeConfigToDisk = (config: Config) => {
+  const filePath = `${PATH_CONFIG}/config.json`;
+  writeJSONFile(filePath, config);
+};
+
+/**
+ * Read the global Config from disk.
+ * @returns The Config object
+ */
+export const readConfigFromDisk = (): Config => {
+  const filePath = `${PATH_CONFIG}/config.json`;
   return readJSONFile(filePath, []);
 };

@@ -12,21 +12,4 @@ export const MAX_NUM_TRADES_A_DAY = 20;
 export const PATH_ORDERS = "./db/orders";
 export const PATH_ERRORS = "./db/errors";
 export const PATH_SUMMARY = "./db/summary";
-
-/**
- * Config file to be read/write as a global constant.
- * We can modify the respective variables by POST/GET to respective API that modifies them.
- */
-export const CONFIG = {
-  /**
-   * An array of dates that we want to skip trading.
-   * Date must be of format YYYY-MM-DD. E.g. `2022-08-28`.
-   * E.g. of array values: ['2022-08-28', '2022-09-03'] if we want to skip both of these dates.
-   */
-  datesUnavailableToTrade: [] as string[],
-  /**
-   * If false, stops all trading event.
-   * Use as a kill switch.
-   */
-  eligibleToTrade: true,
-};
+export const PATH_CONFIG = "./db/config";
