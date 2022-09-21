@@ -2,7 +2,7 @@
 
 Simple Express server that helps automate Buy and Sell stock orders through Thinkorswim API.
 
-This programs exposes API endpoints where you can send a POST request to Buy or Sell stocks for Thinkorswim. It does not decide what/when to Buy or Sell. You need to find a Signal Provider, or write your own program to send a POST request to this server to execute the trade.
+This programs exposes API endpoints where you can send a POST request to Buy or Sell stocks for Thinkorswim. It does not decide what/when to Buy or Sell. You need to find a Signal Provider, or write your own program to send a POST request to this server to execute the trade. For example, you can consider running this program on a cloud server and send the trading signal through webhooks.
 
 # Features
 
