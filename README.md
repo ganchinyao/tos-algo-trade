@@ -340,6 +340,10 @@ http://localhost:8000/logbook?type=orders&date=2022-09-19
 http://localhost:8000/logbook?type=summary&week=2022-09-w3
 ```
 
+<img src="./screenshots/ss1.png" width=500 />
+
+<img src="./screenshots/ss2.png" width=500 />
+
 <table>
 <tr>
 <td> </td> <td> Signature </td> <td> Explanation </td>
@@ -361,8 +365,9 @@ http://localhost:8000/logbook?type=summary&week=2022-09-w3
 
 
 ```
-auth: The same string found in `.env` AUTH
-unavailable_date: A string in the format `YYYY-MM-YY` referencing New York Time.
+type: 'error' to get the logbbok of Errors, 'summary' to get the Summary, and 'orders' to get the orders.
+date: A string in the format `YYYY-MM-YY` referencing New York Time. E.g. `2022-12-13`
+week: A string in the format `YYYY-MM-W{n}` referencing New York Time. E.g. `2022-09-w3` to get all trandes from Sept 15th-21th.
 ```
 
 </td>
