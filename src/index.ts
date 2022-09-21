@@ -199,7 +199,8 @@ app.post(PATH.MARKET_CLOSE_ALL, async (req: Request, res: Response) => {
  *    }
  *
  * Response signature:
- *    Succeeds: 200 "Closed all open orders successfully."
+ *    Succeeds: 200 "Added unavailable_date successfully."
+ *    Failed to pass in 'unavailable_date': 422 "Wrong body format"
  *    Error: 503 "Server error"
  *
  */
