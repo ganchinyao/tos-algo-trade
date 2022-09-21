@@ -1,7 +1,18 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import { isAuthorized } from "./auth";
-import { addErrorToLogbook, Logger } from "./classes/Logger";
+import {
+  addErrorToLogbook,
+  getAllErrors,
+  getAllOrders,
+  getAllSummaries,
+  getParticularDateError,
+  getParticularDateOrder,
+  getParticularDateSummary,
+  getParticularWeekError,
+  getParticularWeekOrder,
+  getParticularWeekSummary,
+} from "./classes/Logger";
 import { Order } from "./classes/Order";
 import {
   IMarketBuyRequest,
@@ -11,6 +22,8 @@ import {
 } from "./endpointsTypes";
 import { CONFIG } from "./Constants";
 import { startCronJob } from "./cron-jobs";
+import dayjs from "dayjs";
+import { getUnixFromYYYYMMWeek } from "./utils/datetime";
 
 dotenv.config();
 
@@ -206,23 +219,66 @@ app.post("/add_unavailable_date", (req: Request, res: Response) => {
 
 /**
  * Get the logbook information.
+ * If date query is specified, retrive information on that particular date.
+ * If week query is specified, retrieve information on that particular week.
+ * Otherwise, retrieve all information to date.
+ *
+ * Priority: date > week > all
+ *
  * Query: {
  *  type: 'error' | 'summary' | 'orders'
+ *  date?: string,
+ *  week?: string,
  * }
  *
  * E.g. http://localhost:8000/logbook?type=orders
+ * E.g. http://localhost:8000/logbook?type=orders&date=2022-09-19
+ * E.g. http://localhost:8000/logbook?type=summary&week=2022-09-w3
  */
 app.get("/logbook", (req: Request, res: Response) => {
-  const type = req.query.type;
-  switch (type) {
-    case "orders":
-      return res.json(Logger.getOrders());
-    case "summary":
-      return res.json(Logger.getSummary());
-    case "error":
-      return res.json(Logger.getErrors());
+  try {
+    const type = req.query.type;
+    const date = req.query.date;
+    const week = req.query.week;
+    if (!type) {
+      return res.send("Please add in a type.");
+    }
+    if (date && typeof date !== "string") {
+      return res.send("Invalid date. Try `2022-09-19`.");
+    }
+    if (week && typeof week !== "string") {
+      return res.send("Invalid week. Try `2022-09-w1`.");
+    }
+    const timestamp = date
+      ? dayjs.tz(date, "America/New_York").unix() * 1000
+      : week
+      ? getUnixFromYYYYMMWeek(week)
+      : Date.now();
+    switch (type) {
+      case "orders":
+        return date
+          ? res.json(getParticularDateOrder(timestamp) || [])
+          : week
+          ? res.json(getParticularWeekOrder(timestamp))
+          : res.json(getAllOrders());
+      case "summary":
+        return date
+          ? res.json(getParticularDateSummary(timestamp) || [])
+          : week
+          ? res.json(getParticularWeekSummary(timestamp))
+          : res.json(getAllSummaries());
+      case "error":
+        return date
+          ? res.json(getParticularDateError(timestamp) || [])
+          : week
+          ? res.json(getParticularWeekError(timestamp))
+          : res.json(getAllErrors());
+    }
+    return res.send("Unexpected type.");
+  } catch (err: any) {
+    addErrorToLogbook(Date.now(), err.toString());
+    return res.status(503).send("Server error");
   }
-  return res.send("Please add in a query");
 });
 
 /**

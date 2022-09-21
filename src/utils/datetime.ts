@@ -61,18 +61,18 @@ export const getYYYYMMWeek = (timestamp: number) => {
 
 /**
  * Returns a 13 digits Unix timestamp that corresponds to the YYYYMMWeek passed in.
- * For example, (2022-09-w2) => 1662566400000 which corresponds to the date 2022-09-08.
+ * For example, (2022-09-w2) => 1662739200000 which corresponds to the date 2022-09-10.
  * @param yyyymmweek A string of the format `YYYY-MM-W{n}`. E.g. `2022-09-w1`, `2022-12-w5`.
  * @returns A 13 digits Unix timestamp that corresponds to the YYYYMMWeek passed in.
  */
 export const getUnixFromYYYYMMWeek = (yyyymmweek: string) => {
   const week = yyyymmweek.slice(yyyymmweek.length - 2);
   const DATE_MAPPING: Record<string, string> = {
-    w1: "01",
-    w2: "08",
-    w3: "15",
-    w4: "22",
-    w5: "29",
+    w1: "03",
+    w2: "10",
+    w3: "17",
+    w4: "24",
+    w5: "30",
   };
   const date = DATE_MAPPING[week.toLowerCase()] || "01";
   return (
