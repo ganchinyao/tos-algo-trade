@@ -2,8 +2,8 @@ import { ASSET_TYPE, INSTRUCTION, makeMarketOrder } from "../../utils/order";
 import {
   addCompletedTradeToSummaryLogbook,
   addOrderToLogbook,
-  getTodaysOrder,
 } from "../Logger";
+import { getTodaysOrder } from "../Logger/Logger";
 import { IOrder_OpenPositions, IOrder_Position } from "./types";
 import {
   getFilledPriceOfLatestOrder,

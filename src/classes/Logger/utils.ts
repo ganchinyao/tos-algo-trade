@@ -1,4 +1,3 @@
-import { Logger } from ".";
 import { getYYYYMMDD } from "../../utils/datetime";
 import {
   writeLogbookErrorsToDisk,
@@ -6,6 +5,11 @@ import {
   writeLogbookSummaryToDisk,
 } from "../../utils/file";
 import { INSTRUCTION } from "../../utils/order";
+import {
+  getParticularWeekError,
+  getParticularWeekOrder,
+  getParticularWeekSummary,
+} from "./Logger";
 import { ILogBook_Order, ILogBook_Trade } from "./types";
 
 /**
@@ -25,7 +29,7 @@ export const addOrderToLogbook = (
   symbol: string,
   strategy: string
 ) => {
-  const currentOrders = Logger.getOrders(timestamp);
+  const currentOrders = getParticularWeekOrder(timestamp);
   const trade: ILogBook_Trade = {
     timestamp,
     instruction,
@@ -63,8 +67,8 @@ export const addCompletedTradeToSummaryLogbook = (
   timestamp: number,
   strategy: string
 ) => {
-  const currentSummary = Logger.getSummary(timestamp);
-  const currentOrders = Logger.getOrders(timestamp);
+  const currentSummary = getParticularWeekSummary(timestamp);
+  const currentOrders = getParticularWeekOrder(timestamp);
   const date = getYYYYMMDD(timestamp);
   const orders = currentOrders.find(
     (order) => order.date === date
@@ -101,7 +105,7 @@ export const addCompletedTradeToSummaryLogbook = (
  * @param error The error message
  */
 export const addErrorToLogbook = (timestamp: number, error: any) => {
-  const currentErrors = Logger.getErrors(timestamp);
+  const currentErrors = getParticularWeekError(timestamp);
   const date = getYYYYMMDD(timestamp);
   const errors = currentErrors.find((err) => err.date === date);
 
@@ -116,34 +120,4 @@ export const addErrorToLogbook = (timestamp: number, error: any) => {
     });
   }
   writeLogbookErrorsToDisk(timestamp, currentErrors);
-};
-
-/**
- * Get the orders executed today, or return undefined if there is no order executed for today yet.
- * @returns Orders from the logbook executed for today, or undefined if there is no order executed for today yet.
- */
-export const getTodaysOrder = () => {
-  const currentOrders = Logger.getOrders();
-  const date = getYYYYMMDD(Date.now());
-  return currentOrders.find((order) => order.date === date);
-};
-
-/**
- * Get the summary of orders executed today, or return undefined if there is no order executed for today yet.
- * @returns Summary from the logbook executed for today, or undefined if there is no order executed for today yet.
- */
-export const getTodaysSummary = () => {
-  const currentSummary = Logger.getSummary();
-  const date = getYYYYMMDD(Date.now());
-  return currentSummary.find((summary) => summary.date === date);
-};
-
-/**
- * Get the errors that happened today, if any.
- * @returns Errors that were added to the logbook today, or undefined.
- */
-export const getTodaysError = () => {
-  const currentErrors = Logger.getErrors();
-  const date = getYYYYMMDD(Date.now());
-  return currentErrors.find((error) => error.date === date);
 };
