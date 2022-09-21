@@ -78,9 +78,20 @@ export const addCompletedTradeToSummaryLogbook = (
   ) as ILogBook_Trade[];
   const summary = currentSummary.find((summ) => summ.date === date);
 
-  const openedPrice = trades[trades.length - 2].price;
-  const closedPrice = trades[trades.length - 1].price;
-  const p_l = Number((closedPrice - openedPrice).toFixed(2));
+  const lastTrade = trades[trades.length - 1];
+  const last2ndTrade = trades[trades.length - 2];
+  const p_l =
+    lastTrade.instruction === INSTRUCTION.BUY_TO_CLOSE
+      ? Number(
+          ((last2ndTrade.price - lastTrade.price) * lastTrade.quantity).toFixed(
+            2
+          )
+        )
+      : Number(
+          ((lastTrade.price - last2ndTrade.price) * lastTrade.quantity).toFixed(
+            2
+          )
+        );
 
   if (summary) {
     // Already exist, so append to existing one.

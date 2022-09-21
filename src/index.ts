@@ -241,6 +241,11 @@ app.post(PATH.ADD_UNAVAILABLE_DATE, (req: Request, res: Response) => {
  *  week?: string,
  * }
  *
+ * Response signature:
+ *    Succeeds: 200 and return the respective data
+ *    Error: 503 "Server error"
+ *
+ *
  * E.g. http://localhost:8000/logbook?type=orders
  * E.g. http://localhost:8000/logbook?type=orders&date=2022-09-19
  * E.g. http://localhost:8000/logbook?type=summary&week=2022-09-w3
