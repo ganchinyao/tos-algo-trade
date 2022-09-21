@@ -31,6 +31,22 @@ TELEGRAM_CHAT_ID=your_telegram_chat_id_to_send_bot_msg_to
 
 # API Endpoints
 
+* [/market_buy](#post-market_buy)
+* [/market_sell](#post-market_sell)
+* [/market_order](#post-market_order)
+* [/market_close_all](#post-market_close_all)
+* [/add_unavailable_date](#post-add_unavailable_date)
+* [/logbook](#get-logbook)
+* [/config](#get-config)
+* [/stop](#get-stop)
+* [/start](#get-start)
+
+In general, for all `POST` endpoints, you will need to send a field `auth` that corresponds to the AUTH in `.env` file. This will then authenticate you and allow the endpoints to pass. `GET` endpoints do not require this `auth` fields as these endpoints are generally safe.
+
+In Buy and Sell order, there is this concept of `strategy`. In short, `strategy` is a name you give to identify the order, so that different strategies can purchase the same ticker. For example, if you send a Buy order with the strategy name `strategy1` to buy 10 SPY, subsequently if you send another Buy order with strategy name `strategy1` again to buy 10 SPY, the buy order will do nothing. But if you send the Buy order with another strategy name, such as `strategy2`, then the Buy order will go through and allows you to manage 2 different Buy positions. When you want to link a Sell order to a Buy order, or vice versa, use the same strategy name, otherwise they will be treated as 2 different positions.
+
+</br>
+
 ### POST /market_buy
  * Send a POST request to put in a Market Buy Order for a particular ticker.
  * If there is already an opened Short order for this strategy that is not closed yet, we will proceed to close that instead.
