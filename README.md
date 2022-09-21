@@ -175,7 +175,6 @@ Error: 503 "Server error"
 ### POST /market_order
  * Send a POST request to put in a Market Buy or Market Sell Order for a particular ticker.
  * This is the same as calling /market_buy or /market_sell, except we instruct the buy or sell action through the body request.
- *
  * If we send in a Market Buy and there is already an opened Short order for this strategy that is not closed yet, we will proceed to close that instead.
  * If we send in a Market Buy and there is already an opened Long order for this strategy that is not closed yet, do nothing.
  * If we send in a Market Sell and there is already an opened Long order for this strategy that is not closed yet, we will proceed to close that instead.
