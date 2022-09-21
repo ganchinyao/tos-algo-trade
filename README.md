@@ -36,7 +36,7 @@ TELEGRAM_TOKEN=your_telegram_token_to_send_the_bot_msg_from
 TELEGRAM_CHAT_ID=your_telegram_chat_id_to_send_bot_msg_to
 ```
 
-For how to get your Refresh Token, Consumer Key and Account Id, please look at the official api from TD Ameritrade.
+For how to get your Refresh Token, Consumer Key and Account Id, please look at the official [docs](https://developer.tdameritrade.com/authentication/apis/post/token-0) from TD Ameritrade. Note: You do not need to input Access Token, as it will be automatically fetched with your Refresh Token.
 
 # API Endpoints
 
