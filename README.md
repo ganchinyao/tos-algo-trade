@@ -231,7 +231,7 @@ Error: 503 "Server error"
  * If there is no open orders, do nothing.
 
 ```bash
-curl -X POST -H "Content-Type: application/json" -d '{"auth": "MY_SOME_AUTH", "unavailable_date": "2022-09-03" }' http://localhost:8000/add_unavailable_date
+curl -X POST -H "Content-Type: application/json" -d '{"auth": "MY_SOME_AUTH"}' http://localhost:8000/market_close_all
 ```
 
 <table>
