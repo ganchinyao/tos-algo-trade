@@ -19,7 +19,8 @@ import {
   IMarketOrderRequest,
   IMarketSellRequest,
   IUnavailableDateRequest,
-} from "./endpointsTypes";
+  PATH,
+} from "./endpoints";
 import { startCronJob } from "./cron-jobs";
 import dayjs from "dayjs";
 import { getUnixFromYYYYMMWeek } from "./utils/datetime";
@@ -55,7 +56,7 @@ app.use(isAuthorized);
  *    Error: 503 "Server error"
  *
  */
-app.post("/market_buy", async (req: Request, res: Response) => {
+app.post(PATH.MARKET_BUY, async (req: Request, res: Response) => {
   try {
     const body: IMarketBuyRequest = req.body;
     const { symbol, quantity, strategy } = body;
@@ -92,7 +93,7 @@ app.post("/market_buy", async (req: Request, res: Response) => {
  *    Error: 503 "Server error"
  *
  */
-app.post("/market_sell", async (req: Request, res: Response) => {
+app.post(PATH.MARKET_SELL, async (req: Request, res: Response) => {
   try {
     const body: IMarketSellRequest = req.body;
     const { symbol, quantity, strategy } = body;
@@ -134,7 +135,7 @@ app.post("/market_sell", async (req: Request, res: Response) => {
  *    Error: 503 "Server error"
  *
  */
-app.post("/market_order", async (req: Request, res: Response) => {
+app.post(PATH.MARKET_ORDER, async (req: Request, res: Response) => {
   try {
     const body: IMarketOrderRequest = req.body;
     const { symbol, quantity, strategy, action } = body;
@@ -172,7 +173,7 @@ app.post("/market_order", async (req: Request, res: Response) => {
  *    Error: 503 "Server error"
  *
  */
-app.post("/market_close_all", async (req: Request, res: Response) => {
+app.post(PATH.MARKET_CLOSE_ALL, async (req: Request, res: Response) => {
   try {
     await Order.marketCloseAllOpenOrders();
     return res.send("Closed all open orders successfully.");
@@ -199,7 +200,7 @@ app.post("/market_close_all", async (req: Request, res: Response) => {
  *    Error: 503 "Server error"
  *
  */
-app.post("/add_unavailable_date", (req: Request, res: Response) => {
+app.post(PATH.ADD_UNAVAILABLE_DATE, (req: Request, res: Response) => {
   try {
     const body: IUnavailableDateRequest = req.body;
     const { unavailable_date } = body;
@@ -240,7 +241,7 @@ app.post("/add_unavailable_date", (req: Request, res: Response) => {
  * E.g. http://localhost:8000/logbook?type=orders&date=2022-09-19
  * E.g. http://localhost:8000/logbook?type=summary&week=2022-09-w3
  */
-app.get("/logbook", (req: Request, res: Response) => {
+app.get(PATH.LOGBOOK, (req: Request, res: Response) => {
   try {
     const type = req.query.type;
     const date = req.query.date;
@@ -288,16 +289,18 @@ app.get("/logbook", (req: Request, res: Response) => {
 
 /**
  * View the Config object in disk.
+ * E.g. http://localhost:8000/config
  */
-app.get("/config", (req: Request, res: Response) => {
+app.get(PATH.CONFIG, (req: Request, res: Response) => {
   const config = readConfigFromDisk();
   return res.json(config);
 });
 
 /**
  * A kill switch to quickly stop all trading. The bot will not executed anymore trades.
+ * E.g. http://localhost:8000/stop
  */
-app.get("/stop", (req: Request, res: Response) => {
+app.get(PATH.STOP, (req: Request, res: Response) => {
   const currentConfig = readConfigFromDisk();
   const newConfig: Config = {
     ...currentConfig,
@@ -309,8 +312,9 @@ app.get("/stop", (req: Request, res: Response) => {
 
 /**
  * Resume the kill switch done in /stop.
+ * E.g. http://localhost:8000/start
  */
-app.get("/start", (req: Request, res: Response) => {
+app.get(PATH.START, (req: Request, res: Response) => {
   const currentConfig = readConfigFromDisk();
   const newConfig: Config = {
     ...currentConfig,
