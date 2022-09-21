@@ -5,8 +5,8 @@ import {
   getYYYYMMDD,
   isCurrentHourEquals,
   isCurrentMinMoreThan,
-} from "../../utils/datetime";
-import { readConfigFromDisk } from "../../utils/file";
+  readConfigFromDisk,
+} from "../../utils";
 import { getTodaysOrder } from "../Logger";
 import {
   IOrder_OpenPosition,

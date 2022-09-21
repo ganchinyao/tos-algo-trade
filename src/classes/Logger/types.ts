@@ -1,4 +1,4 @@
-import { INSTRUCTION } from "../../utils/order";
+import { INSTRUCTION } from "../../utils";
 
 export interface ILogBook_Trade {
   timestamp: number; // date-time stamp in Unix 13 digits

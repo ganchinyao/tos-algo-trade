@@ -1,4 +1,4 @@
-import { ASSET_TYPE, INSTRUCTION, makeMarketOrder } from "../../utils/order";
+import { ASSET_TYPE, INSTRUCTION, makeMarketOrder } from "../../utils";
 import {
   addCompletedTradeToSummaryLogbook,
   addOrderToLogbook,

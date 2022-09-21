@@ -3,8 +3,7 @@ import {
   getTodaysOrder,
   getTodaysSummary,
 } from "../classes/Logger";
-import { getHHmm, getYYYYMMDD } from "../utils/datetime";
-import { sendTelegramBotMsg } from "../utils/telegram";
+import { getHHmm, getYYYYMMDD, sendTelegramBotMsg } from "../utils";
 
 /**
  * Format these special characters because telegram requires these character to append '\', since these special characters have special meaning on its own to telegram.
