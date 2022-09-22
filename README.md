@@ -1,8 +1,14 @@
-# tos-algo-trade
+# Node.js trading bot for TD Ameritrade
 
-Simple Express server that helps automate Buy and Sell stock orders through Thinkorswim API.
+Simple Express server that helps automate Buy and Sell stock orders through TD Ameritrade API.
 
-This programs exposes API endpoints where you can send a POST request to Buy or Sell stocks for Thinkorswim. It does not decide what/when to Buy or Sell. You need to find a Signal Provider, or write your own program to send a POST request to this server to execute the trade. For example, you can consider running this program on a cloud server and send the trading signal through webhooks.
+This programs exposes API endpoints where you can send a POST request to Buy or Sell stocks for TD Ameritrade. It does not decide what/when to Buy or Sell. You need to find a Signal Provider, or write your own program to send a POST request to this server to execute the trade. For example, you can consider running this program on a cloud server and send the trading signal through webhooks.
+
+Example usage:
+
+1. Run this server in AWS (set up proper firewall filtering)
+2. Formulate strategies in TradingView
+3. Use TradingView webhook to send POST request to your server
 
 # Features
 
@@ -14,7 +20,7 @@ This programs exposes API endpoints where you can send a POST request to Buy or 
 # Limitations
 
 1. Only market buy and market sell of Stocks are supported and tested. Limit orders are not added in this version.
-2. Options trades may not function properly. Use at your own risk.
+2. Only equity instruments are tested. Options/futures trades may not function properly. Use at your own risk.
 3. Only orders with 1 leg will be supported.
 4. For short trading days, automaticatic closing of trades at 15:50 hr will not work.
 
@@ -31,12 +37,23 @@ PORT=8000
 AUTH=enter_some_string_here_of_your_choice
 REFRESH_TOKEN=your_refresh_token_here
 CONSUMER_KEY=your_consumer_key_without_@AMER.OAUTHAP
-ACCOUNT_ID=nine_digits_thinkorswim_account_id
+ACCOUNT_ID=nine_digits_tdameritrade_account_id
 TELEGRAM_TOKEN=your_telegram_token_to_send_the_bot_msg_from
 TELEGRAM_CHAT_ID=your_telegram_chat_id_to_send_bot_msg_to
 ```
 
 For how to get your Refresh Token, Consumer Key and Account Id, please look at the official [docs](https://developer.tdameritrade.com/authentication/apis/post/token-0) from TD Ameritrade. Note: You do not need to input Access Token, as it will be automatically fetched with your Refresh Token.
+
+# Cron-job
+
+The following cron-job will run at 15:50 New York Time from Monday-Friday:
+
+1. Close all open Long/Short orders (that were executed by this program only).
+2. Send today's summary to Telegram.
+3. Send an error message to Telegram if encountered Error today.
+
+<img src="./screenshots/ss3.png" width="250" />
+
 
 # API Endpoints
 
