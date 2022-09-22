@@ -4,11 +4,12 @@
   "description": "Simple Express server that helps automate Buy and Sell stock orders through Thinkorswim API.",
   "main": "src/index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc",
     "start": "npm run build && pm2 start dist/index.js --time",
     "list": "pm2 list",
     "stop": "pm2 stop index",
+    "pm2-logs": "cat ~/.pm2/logs/index-out.log",
+    "pm2-logs-err": "cat ~/.pm2/logs/index-error.log",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
     "clean": "rm -rf dist"
   },
