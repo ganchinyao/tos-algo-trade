@@ -1,4 +1,4 @@
-import { getQuote } from "../api/quotes";
+import { getQuote } from "../api";
 
 /**
  * Return the last price of the Equity symbol.
