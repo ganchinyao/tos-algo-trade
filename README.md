@@ -2,7 +2,7 @@
 
 Simple Express server that helps automate Buy and Sell stock orders through Thinkorswim API.
 
-This programs exposes API endpoints where you can send a POST request to Buy or Sell stocks for Thinkorswim. It does not decide what/when to Buy or Sell. You need to find a Signal Provider, or write your own program to send a POST request to this server to execute the trade.
+This programs exposes API endpoints where you can send a POST request to Buy or Sell stocks for Thinkorswim. It does not decide what/when to Buy or Sell. You need to find a Signal Provider, or write your own program to send a POST request to this server to execute the trade. For example, you can consider running this program on a cloud server and send the trading signal through webhooks.
 
 # Features
 
@@ -10,6 +10,13 @@ This programs exposes API endpoints where you can send a POST request to Buy or 
 2. Log all trades to a Logbook to be viewed easily
 3. Automatically close all open trades at 15:50 New York Time each day
 4. Send trade summary to a Telegram group of your choice each day at 15:50
+
+# Limitations
+
+1. Only market buy and market sell of Stocks are supported and tested. Limit orders are not added in this version.
+2. Options trades may not function properly. Use at your own risk.
+3. Only orders with 1 leg will be supported.
+4. For short trading days, automaticatic closing of trades at 15:50 hr will not work.
 
 # Setup
 1. Clone this project
@@ -28,6 +35,8 @@ ACCOUNT_ID=nine_digits_thinkorswim_account_id
 TELEGRAM_TOKEN=your_telegram_token_to_send_the_bot_msg_from
 TELEGRAM_CHAT_ID=your_telegram_chat_id_to_send_bot_msg_to
 ```
+
+For how to get your Refresh Token, Consumer Key and Account Id, please look at the official [docs](https://developer.tdameritrade.com/authentication/apis/post/token-0) from TD Ameritrade. Note: You do not need to input Access Token, as it will be automatically fetched with your Refresh Token.
 
 # API Endpoints
 
@@ -166,7 +175,6 @@ Error: 503 "Server error"
 ### POST /market_order
  * Send a POST request to put in a Market Buy or Market Sell Order for a particular ticker.
  * This is the same as calling /market_buy or /market_sell, except we instruct the buy or sell action through the body request.
- *
  * If we send in a Market Buy and there is already an opened Short order for this strategy that is not closed yet, we will proceed to close that instead.
  * If we send in a Market Buy and there is already an opened Long order for this strategy that is not closed yet, do nothing.
  * If we send in a Market Sell and there is already an opened Long order for this strategy that is not closed yet, we will proceed to close that instead.
@@ -414,6 +422,27 @@ http://localhost:8000/stop
 http://localhost:8000/start
 ```
 
+# Credits
+We use the following open source library to make this app possible:
 
+1. [Sainglend/tda-api-client](https://github.com/Sainglend/tda-api-client)
+2. [axios/axios](https://github.com/axios/axios)
+3. [iamkun/dayjs](https://github.com/iamkun/dayjs/)
+4. [motdola/dotenv](https://github.com/motdotla/dotenv)
+5. [expressjs/express](https://github.com/expressjs/express)
+6. [node-cron/node-cron](https://github.com/node-cron/node-cron)
+7. [Unitech/pm2](https://github.com/Unitech/pm2)
 
+# License and Disclaimer
 
+```
+ISC License
+
+Copyright <YEAR> <OWNER>
+
+Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+```
+
+I do not provide personal investment advice and I am not a qualified licensed investment/financial advisor. The use of this software, as well as any interactions with me or comments made by me, whether in private or public, should not constitute financial advice or trading advice. Automated trading programs carry a particularly high risk due to their ungoverned nature. Any losses or gains made with one or more of these programs is your own responsibility. We takes no responsibility for any losses incurred or any malfunctions of the software on your account. Money lost by this program will not be refunded, as we are not liable for the transactions made in your accounts. As you are required to store your credentials for this program to execute trades, you are liable to the security of such credentials and will store these credentials in a safe and secure environment. Any lost of credentials due to the usage/attempt usage of this software will be your sole responsibility and we take no responsibility.
