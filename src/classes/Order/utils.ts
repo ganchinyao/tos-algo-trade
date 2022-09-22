@@ -109,8 +109,8 @@ export const isEligibleForTrading = () => {
     // Today is not available to trade
     return false;
   }
-  if (isCurrentHourEquals(15) && isCurrentMinMoreThan(50)) {
-    // Do not allow the user to trade after 15:50 New York Time.
+  if (isCurrentHourEquals(15) && isCurrentMinMoreThan(49)) {
+    // Do not allow the user to trade after 15:49 New York Time.
     // This is because the cron_job will run at 15:50 to exit all trades.
     return false;
   }
