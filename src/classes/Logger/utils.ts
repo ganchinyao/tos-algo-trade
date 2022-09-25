@@ -97,7 +97,7 @@ export const addCompletedTradeToSummaryLogbook = (
     // Already exist, so append to existing one.
     summary.numCompletedTrades = summary.numCompletedTrades + 1;
     summary.rawP_L.push(p_l);
-    summary.netP_L = summary.netP_L + p_l;
+    summary.netP_L = Number((summary.netP_L + p_l).toFixed(2));
   } else {
     // Doesn't exist yet, create new one for this date.
     currentSummary.push({
