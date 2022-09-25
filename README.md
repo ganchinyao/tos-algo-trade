@@ -24,6 +24,8 @@ Example usage:
 3. Only orders with 1 leg will be supported.
 4. For short trading days, automaticatic closing of trades at 15:50 hr will not work.
 
+Note: To prevent yourself from being flagged as a Pattern Day Trader, make sure you have at least $25k in your account, or you are using a cash account.
+
 # Setup
 1. Clone this project
 2. Run `npm install` on root folder of project
