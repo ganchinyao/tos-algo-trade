@@ -1,4 +1,4 @@
-import { ASSET_TYPE, INSTRUCTION, makeMarketOrder } from "../../utils";
+import { ASSET_TYPE, delay, INSTRUCTION, makeMarketOrder } from "../../utils";
 import {
   addCompletedTradeToSummaryLogbook,
   addOrderToLogbook,
@@ -56,6 +56,8 @@ class Order {
     this.hasPendingOrder = true;
     await makeMarketOrder(symbol, ASSET_TYPE.EQUITY, INSTRUCTION.BUY, quantity);
     const now = Date.now();
+    // Add a delay so TD can properly return latest price in the orders api from the time we just finished making the order.
+    await delay(1000);
     const filledPrice = await getFilledPriceOfLatestOrder({
       symbol,
       timestamp: now,
@@ -113,6 +115,8 @@ class Order {
       quantity
     );
     const now = Date.now();
+    // Add a delay so TD can properly return latest price in the orders api from the time we just finished making the order.
+    await delay(1000);
     const filledPrice = await getFilledPriceOfLatestOrder({
       symbol,
       timestamp: now,
