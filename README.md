@@ -22,7 +22,7 @@ Example usage:
 1. Only market buy and market sell of Stocks are supported and tested. Limit orders are not added in this version.
 2. Only equity instruments are tested. Options/futures trades may not function properly. Use at your own risk.
 3. Only orders with 1 leg will be supported.
-4. For short trading days, automaticatic closing of trades at 15:50 hr will not work.
+4. For short trading days, automatic closing of trades at 15:50 hr will not work.
 
 Note: To prevent yourself from being flagged as a Pattern Day Trader, make sure you have at least $25k in your account, or you are using a cash account.
 
